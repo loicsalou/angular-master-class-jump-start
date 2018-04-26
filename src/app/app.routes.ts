@@ -6,7 +6,7 @@ import {ContactExistsGuard} from './contact-exists.guard';
 
 export const APP_ROUTES: Routes = [
   {path: '', component: ContactsListComponent},
-  {path: 'contact/:id', component: ContactsDetailComponent},
+  {path: 'contact/:id', component: ContactsDetailComponent, canActivate: [ContactExistsGuard]},
   {path: 'contact/:id/edit', component: ContactsEditorComponent, canActivate: [ContactExistsGuard]},
   // Wildcard route serves as fallback route and has to be
   // the last defined route in this list.
