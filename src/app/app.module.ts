@@ -1,22 +1,25 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { RouterModule } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {NgModule} from '@angular/core';
+import {FlexLayoutModule} from '@angular/flex-layout';
+import {RouterModule} from '@angular/router';
+import {HttpClientModule} from '@angular/common/http';
+import {FormsModule} from '@angular/forms';
 
-import { ContactsMaterialModule } from './contacts-material.module';
+import {ContactsMaterialModule} from './contacts-material.module';
 
-import { ContactsAppComponent } from './app.component';
-import { ContactsListComponent } from './contacts-list/contacts-list.component';
-import { ContactsDetailComponent } from './contacts-detail/contacts-detail.component';
-import { ContactsEditorComponent } from './contacts-editor/contacts-editor.component';
+import {ContactsAppComponent} from './app.component';
+import {ContactsListComponent} from './contacts-list/contacts-list.component';
+import {ContactsDetailComponent} from './contacts-detail/contacts-detail.component';
+import {ContactsEditorComponent} from './contacts-editor/contacts-editor.component';
 
-import { ContactsService } from './contacts.service';
+import {ContactsService} from './contacts.service';
 
-import { APP_ROUTES } from './app.routes';
-import { API_ENDPOINT } from './app.tokens';
+import {APP_ROUTES} from './app.routes';
+import {API_ENDPOINT} from './app.tokens';
+import {StoreModule} from '@ngrx/store';
+import {ROOT_REDUCERS} from './state/app.state';
+import {ContactExistsGuard} from './contact-exists.guard';
 
 @NgModule({
   declarations: [
@@ -32,11 +35,13 @@ import { API_ENDPOINT } from './app.tokens';
     FlexLayoutModule,
     RouterModule.forRoot(APP_ROUTES),
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    StoreModule.forRoot(ROOT_REDUCERS)
   ],
   providers: [
     ContactsService,
-    { provide: API_ENDPOINT, useValue: 'http://localhost:4201/api' }
+    ContactExistsGuard,
+    {provide: API_ENDPOINT, useValue: 'http://localhost:4201/api'}
   ],
   bootstrap: [ContactsAppComponent]
 })

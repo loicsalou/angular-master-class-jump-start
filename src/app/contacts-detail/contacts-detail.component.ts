@@ -1,7 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ContactsService } from '../contacts.service';
-import { Contact } from '../models/contact';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {ContactsService} from '../contacts.service';
+import {Contact} from '../models/contact';
+import {Store} from '@ngrx/store';
+import {ApplicationState} from '../state/app.state';
+import {Observable} from 'rxjs/Observable';
+import {SelectContactsAction} from '../state/contacts/contacts.actions';
+import {ContactsState} from '../state/contacts/contact.reducer';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'trm-contacts-detail',
@@ -10,12 +16,22 @@ import { Contact } from '../models/contact';
 })
 export class ContactsDetailComponent implements OnInit {
 
-  contact: Contact;
+  // contact: Contact;
+  contact$: Observable<Contact>;
 
-  constructor(private contactsService: ContactsService, private route: ActivatedRoute) {}
+  constructor(private contactsService: ContactsService, private route: ActivatedRoute, private store: Store<ApplicationState>) {
+  }
 
   ngOnInit() {
-    this.contactsService.getContact(this.route.snapshot.paramMap.get('id'))
-                        .subscribe(contact => this.contact = contact);
+    const selectedContactId = this.route.snapshot.paramMap.get('id');
+    const contactsSelector = (state: ApplicationState) => state.contacts;
+    this.store.dispatch(new SelectContactsAction(selectedContactId));
+
+    this.contact$ = this.store.select(contactsSelector).pipe(
+      map(
+        (contacts: ContactsState) => {
+          return contacts.list.find(item => item.id === +selectedContactId);
+        })
+    );
   }
 }
