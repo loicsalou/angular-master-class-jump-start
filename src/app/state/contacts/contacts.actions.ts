@@ -3,6 +3,8 @@ import {Contact} from '../../models/contact';
 
 export enum ContactsActionTypes {
   AddContactsActionType = '[contacts] - add contact',
+  LoadContactsActionType = '[contacts] - load contacts',
+  UpdateContactSuccessActionType = '[contacts] - update contact success',
   LoadContactsSuccessActionType = '[contacts] - load success',
   SelectContactActionType = '[contacts] - select',
   UpdateContactActionType = '[contacts] - update'
@@ -10,7 +12,12 @@ export enum ContactsActionTypes {
 
 /** Implement LoadContactsSuccessAction here */
 
-export type ContactsActions = AddContactAction | LoadContactsSuccessAction | SelectContactsAction | UpdateContactsAction;
+export type ContactsActions = AddContactAction | LoadContactsSuccessAction | SelectContactsAction
+  | UpdateContactsAction | LoadContactsAction | UpdateContactSuccessAction;
+
+export class LoadContactsAction implements Action {
+  readonly type = ContactsActionTypes.LoadContactsActionType;
+}
 
 export class LoadContactsSuccessAction implements Action {
   readonly type = ContactsActionTypes.LoadContactsSuccessActionType;
@@ -28,6 +35,13 @@ export class SelectContactsAction implements Action {
 
 export class UpdateContactsAction implements Action {
   readonly type = ContactsActionTypes.UpdateContactActionType;
+
+  constructor(public contact: Contact) {
+  }
+}
+
+export class UpdateContactSuccessAction implements Action {
+  readonly type = ContactsActionTypes.UpdateContactSuccessActionType;
 
   constructor(public contact: Contact) {
   }

@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {Contact} from '../models/contact';
-import {ContactsService} from '../contacts.service';
 import {Store} from '@ngrx/store';
 import {ApplicationState} from '../state/app.state';
-import {LoadContactsSuccessAction} from '../state/contacts/contacts.actions';
+import {LoadContactsAction} from '../state/contacts/contacts.actions';
+import {ContactsQuery} from '../state/contacts/contact.reducer';
+import getContacts = ContactsQuery.getContacts;
 
 @Component({
   selector: 'trm-contacts-list',
@@ -15,15 +16,12 @@ export class ContactsListComponent implements OnInit {
 
   contacts$: Observable<Array<Contact>>;
 
-  constructor(private contactsService: ContactsService, private store: Store<ApplicationState>) {
+  constructor(private store: Store<ApplicationState>) {
   }
 
   ngOnInit() {
-    this.contactsService.getContacts().subscribe(
-      (contacts: Contact[]) => this.store.dispatch(new LoadContactsSuccessAction(contacts))
-    );
-    const query = (state: ApplicationState) => state.contacts.list;
-    this.contacts$ = this.store.select(query);
+    this.store.dispatch(new LoadContactsAction());
+    this.contacts$ = this.store.select(getContacts);
   }
 
   trackByContactId(index, contact) {

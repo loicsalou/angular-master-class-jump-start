@@ -18,8 +18,12 @@ import {ContactsService} from './contacts.service';
 import {APP_ROUTES} from './app.routes';
 import {API_ENDPOINT} from './app.tokens';
 import {StoreModule} from '@ngrx/store';
-import {ROOT_REDUCERS} from './state/app.state';
+import {META_REDUCERS, ROOT_REDUCERS} from './state/app.state';
 import {ContactExistsGuard} from './contact-exists.guard';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {environment} from '../environments/environment';
+import {ContactsEffectsService} from './contacts-effects.service';
+import {EffectsModule} from '@ngrx/effects';
 
 @NgModule({
   declarations: [
@@ -36,11 +40,16 @@ import {ContactExistsGuard} from './contact-exists.guard';
     RouterModule.forRoot(APP_ROUTES),
     HttpClientModule,
     FormsModule,
-    StoreModule.forRoot(ROOT_REDUCERS)
+    StoreModule.forRoot(ROOT_REDUCERS, {
+      metaReducers: META_REDUCERS
+    }),
+    EffectsModule.forRoot([ContactsEffectsService]),
+    !environment.production ? StoreDevtoolsModule.instrument({maxAge: 5}) : []
   ],
   providers: [
     ContactsService,
     ContactExistsGuard,
+    ContactsEffectsService,
     {provide: API_ENDPOINT, useValue: 'http://localhost:4201/api'}
   ],
   bootstrap: [ContactsAppComponent]

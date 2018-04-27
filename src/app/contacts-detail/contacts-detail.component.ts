@@ -6,8 +6,8 @@ import {Store} from '@ngrx/store';
 import {ApplicationState} from '../state/app.state';
 import {Observable} from 'rxjs/Observable';
 import {SelectContactsAction} from '../state/contacts/contacts.actions';
-import {ContactsState} from '../state/contacts/contact.reducer';
-import {map} from 'rxjs/operators';
+import {ContactsQuery} from '../state/contacts/contact.reducer';
+import getSelectedContact = ContactsQuery.getSelectedContact;
 
 @Component({
   selector: 'trm-contacts-detail',
@@ -27,11 +27,6 @@ export class ContactsDetailComponent implements OnInit {
     const contactsSelector = (state: ApplicationState) => state.contacts;
     this.store.dispatch(new SelectContactsAction(selectedContactId));
 
-    this.contact$ = this.store.select(contactsSelector).pipe(
-      map(
-        (contacts: ContactsState) => {
-          return contacts.list.find(item => item.id === +selectedContactId);
-        })
-    );
+    this.contact$ = this.store.select(getSelectedContact);
   }
 }

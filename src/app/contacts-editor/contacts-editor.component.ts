@@ -5,9 +5,10 @@ import {ContactsService} from '../contacts.service';
 import {ApplicationState} from '../state/app.state';
 import {Store} from '@ngrx/store';
 import {SelectContactsAction, UpdateContactsAction} from '../state/contacts/contacts.actions';
-import {map} from 'rxjs/operators';
-import {Observable} from "rxjs/Observable";
-import {ContactsState} from "../state/contacts/contact.reducer";
+import {Observable} from 'rxjs/Observable';
+import {ContactsQuery} from '../state/contacts/contact.reducer';
+import {map} from "rxjs/operators";
+import getSelectedContact = ContactsQuery.getSelectedContact;
 
 @Component({
   selector: 'trm-contacts-editor',
@@ -19,21 +20,19 @@ export class ContactsEditorComponent implements OnInit {
   // we need to initialize since we can't use ?. operator with ngModel
   contact$: Observable<Contact>;
 
-  constructor(private contactsService: ContactsService,
-              private router: Router,
+  constructor(private router: Router,
               private route: ActivatedRoute, private store: Store<ApplicationState>) {
   }
 
   ngOnInit() {
     const selectedContactId = this.route.snapshot.paramMap.get('id');
-    const contactsSelector = (state: ApplicationState) => state.contacts;
 
-    this.contact$ = this.store.select(contactsSelector).pipe(
+    this.contact$ = this.store.select(getSelectedContact).pipe(
       map(
-        (contacts: ContactsState) => {
-          return contacts.list.find(item => item.id === +selectedContactId);
-        })
-    );
+        contact => {
+          return {...contact};
+        }
+      ));
     this.store.dispatch(new SelectContactsAction(selectedContactId));
   }
 
